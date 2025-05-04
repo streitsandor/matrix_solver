@@ -1,0 +1,17 @@
+Virtuális környezet kézi létrehozás:
+py -m venv .venv
+
+Admin powershellbe:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Virtuális környezet kézi aktiválás:
+.venv\Scripts\activate
+
+Szükséges könytárak telepítése: (visual studionak be kell húznia auto)
+py -m pip install -r requirements.txt
+
+Telepített könyvtárak mentése:
+py -m pip freeze > requirements.txt
+
+Összes könyvtár törlése:
+py -m pip uninstall -r .\requirements.txt -y
