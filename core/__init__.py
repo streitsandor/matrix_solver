@@ -1,5 +1,11 @@
 from .input_handler import get_matrix, choose_matrix
-from .matrix_ops import handle_binary_operation, handle_unary_operation, scalar_multiply
+from .matrix_ops import (
+    handle_binary_operation,
+    handle_unary_operation,
+    scalar_multiply,
+    matrix_inverse,
+    matrix_determinant,
+)
 from .matrix_store import (
     saved_matrices,
     last_result,
@@ -16,6 +22,8 @@ __all__ = [
     "handle_binary_operation",
     "handle_unary_operation",
     "scalar_multiply",
+    "matrix_inverse",
+    "matrix_determinant",
     "saved_matrices",
     "last_result",
     "save_matrix",

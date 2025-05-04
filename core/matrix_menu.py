@@ -1,10 +1,13 @@
 import os
+import numpy as np
 from core import (
     saved_matrices,
     last_result,
     handle_binary_operation,
     handle_unary_operation,
     scalar_multiply,
+    matrix_inverse,
+    matrix_determinant,
     save_matrix,
     get_matrix,
     load_matrix,
@@ -29,11 +32,13 @@ def menu() -> str:
     print("5. Squaring (Matrix ^ 2)")
     print("6. Square Root (element-wise)")
     print("7. Multiply matrix with scalar")
-    print("8. Save matrix")
-    print("9. Load matrix")
-    print("10. Show saved matrices")
-    print("11. Delete saved matrix")
-    print("12. Visualize matrix")
+    print("8. Inverse of a matrix")
+    print("9. Determinant of a matrix")
+    print("10. Save matrix")
+    print("11. Load matrix")
+    print("12. Show saved matrices")
+    print("13. Delete saved matrix")
+    print("14. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -56,11 +61,13 @@ def matrix_calculator() -> None:
         "5": lambda: handle_unary_operation("square", saved_matrices),
         "6": lambda: handle_unary_operation("sqrt", saved_matrices),
         "7": lambda: scalar_multiply(saved_matrices),
-        "8": lambda: save_matrix(get_matrix, last_result),
-        "9": load_matrix,
-        "10": show_saved_matrices,
-        "11": delete_saved_matrix,
-        "12": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "8": lambda: matrix_inverse(saved_matrices),
+        "9": lambda: matrix_determinant(saved_matrices),
+        "10": lambda: save_matrix(get_matrix, last_result),
+        "11": load_matrix,
+        "12": show_saved_matrices,
+        "13": delete_saved_matrix,
+        "14": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 
@@ -76,7 +83,10 @@ def matrix_calculator() -> None:
         else:
             print("Invalid choice.")
 
-        if result is not None:
-            last_result = result
+        if isinstance(result, np.ndarray):
             print("\nResult:")
             print(result)
+            last_result = result
+        elif isinstance(result, (float, int, np.float64, np.int64)):
+            print(f"\nResult: {result}")
+            last_result = result
