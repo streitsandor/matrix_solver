@@ -15,3 +15,6 @@ py -m pip freeze > requirements.txt
 
 Összes könyvtár törlése:
 py -m pip uninstall -r .\requirements.txt -y
+
+Tesztek futtatása:
+pytest tests/

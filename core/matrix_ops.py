@@ -94,3 +94,79 @@ def matrix_determinant(saved_matrices) -> float | int | None:
     except Exception as e:
         print(f"Error during determinant calculation: {e}")
     return None
+
+
+def matrix_adjugate(saved_matrices) -> np.ndarray | None:
+    """Adjungált mátrix számítása (kofaktor transzponáltja)."""
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print("Error: Matrix must be square.")
+            return None
+        n = A.shape[0]
+        cofactors = np.zeros_like(A)
+        for i in range(n):
+            for j in range(n):
+                minor = np.delete(np.delete(A, i, axis=0), j, axis=1)
+                cofactors[i, j] = ((-1) ** (i + j)) * np.linalg.det(minor)
+        return cofactors.T
+    except Exception as e:
+        print(f"Error during adjugate calculation: {e}")
+        return None
+
+
+def describe_matrix_types(saved_matrices) -> list[str] | None:
+    """Felsorolja az adott mátrixra illő összes ismert típusát."""
+    try:
+        A = choose_matrix(saved_matrices)
+        types = []
+
+        if A.ndim != 2:
+            print("Not a valid 2D matrix.")
+            return None
+
+        m, n = A.shape
+        is_square = m == n
+
+        if is_square:
+            types.append("Négyzetes")
+
+            if np.allclose(A, A.T):
+                types.append("Szimmetrikus")
+
+            if np.allclose(A.T @ A, np.eye(n)):
+                types.append("Ortogonális")
+
+            if np.allclose(A @ A, np.eye(n)):
+                types.append("Involúciós")
+
+            if np.allclose(A, np.eye(n)):
+                types.append("Identitásmátrix")
+                types.append("Diagonális")
+                types.append("Szimmetrikus")
+                types.append("Felső háromszög")
+                types.append("Alsó háromszög")
+                types.append("Skalár")
+
+        if np.count_nonzero(A) == 0:
+            types.append("Nullmátrix")
+
+        if np.allclose(A, np.triu(A)):
+            types.append("Felső háromszög")
+
+        if np.allclose(A, np.tril(A)):
+            types.append("Alsó háromszög")
+
+        if np.count_nonzero(A - np.diag(np.diag(A))) == 0:
+            types.append("Diagonális")
+            if is_square and np.allclose(np.diag(A), A[0, 0] * np.ones(n)):
+                types.append("Skalár")
+
+        print("\nTípusok:")
+        for t in sorted(set(types)):
+            print(f"- {t}")
+        return sorted(set(types))
+
+    except Exception as e:
+        print(f"Error during matrix type description: {e}")
+        return None

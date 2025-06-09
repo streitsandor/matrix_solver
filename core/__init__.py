@@ -5,6 +5,8 @@ from .matrix_ops import (
     scalar_multiply,
     matrix_inverse,
     matrix_determinant,
+    matrix_adjugate,
+    describe_matrix_types,
 )
 from .matrix_store import (
     saved_matrices,
@@ -24,6 +26,8 @@ __all__ = [
     "scalar_multiply",
     "matrix_inverse",
     "matrix_determinant",
+    "matrix_adjugate",
+    "describe_matrix_types",
     "saved_matrices",
     "last_result",
     "save_matrix",

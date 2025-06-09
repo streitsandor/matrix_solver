@@ -8,11 +8,13 @@ from core import (
     scalar_multiply,
     matrix_inverse,
     matrix_determinant,
+    matrix_adjugate,
     save_matrix,
     get_matrix,
     load_matrix,
     show_saved_matrices,
     delete_saved_matrix,
+    describe_matrix_types,
 )
 from visualizer import visualize_matrix_option
 
@@ -34,11 +36,13 @@ def menu() -> str:
     print("7. Multiply matrix with scalar")
     print("8. Inverse of a matrix")
     print("9. Determinant of a matrix")
-    print("10. Save matrix")
-    print("11. Load matrix")
-    print("12. Show saved matrices")
-    print("13. Delete saved matrix")
-    print("14. Visualize matrix")
+    print("10. Adjugate of a matrix")
+    print("11. Save matrix")
+    print("12. Load matrix")
+    print("13. Show saved matrices")
+    print("14. Delete saved matrix")
+    print("15. Describe matrix type")
+    print("16. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -63,11 +67,13 @@ def matrix_calculator() -> None:
         "7": lambda: scalar_multiply(saved_matrices),
         "8": lambda: matrix_inverse(saved_matrices),
         "9": lambda: matrix_determinant(saved_matrices),
-        "10": lambda: save_matrix(get_matrix, last_result),
-        "11": load_matrix,
-        "12": show_saved_matrices,
-        "13": delete_saved_matrix,
-        "14": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "10": lambda: matrix_adjugate(saved_matrices),
+        "11": lambda: save_matrix(get_matrix, last_result),
+        "12": load_matrix,
+        "13": show_saved_matrices,
+        "14": delete_saved_matrix,
+        "15": lambda: describe_matrix_types(saved_matrices),
+        "16": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 
