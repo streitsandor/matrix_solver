@@ -48,7 +48,7 @@ def visualize_matrix(matrix: np.ndarray, name: str = "Matrix") -> None:
         plot_matrix_sums(matrix)
 
 
-def visualize_matrix_option(saved_matrices: dict[str, np.ndarray], last_result: np.ndarray | None) -> None:
+def visualize_matrix_option(saved_matrices: dict[str, np.ndarray], last_result) -> None:
     """Vizualizációs menü."""
     print("\nVisualize which matrix?")
     print("1. Saved matrix")

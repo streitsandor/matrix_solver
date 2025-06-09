@@ -93,6 +93,6 @@ def matrix_calculator() -> None:
             print("\nResult:")
             print(result)
             last_result = result
-        elif isinstance(result, (float, int, np.float64, np.int64)):
+        elif isinstance(result, (float, int, np.float64, np.int64)):  # type: ignore
             print(f"\nResult: {result}")
             last_result = result
