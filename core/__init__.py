@@ -7,6 +7,8 @@ from .matrix_ops import (
     matrix_determinant,
     matrix_adjugate,
     describe_matrix_types,
+    matrix_minor,
+    matrix_cofactor,
 )
 from .matrix_store import (
     saved_matrices,
@@ -28,6 +30,8 @@ __all__ = [
     "matrix_determinant",
     "matrix_adjugate",
     "describe_matrix_types",
+    "matrix_minor",
+    "matrix_cofactor",
     "saved_matrices",
     "last_result",
     "save_matrix",

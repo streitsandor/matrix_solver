@@ -3,7 +3,8 @@ from core import choose_matrix
 from core.logger_setup import logger
 
 FORBIDDEN_SQUARE = "Error: Matrix must be square."
-ORIGINAL_MATRIX = "Original Matrix:\n%s"
+ORIGINAL_MATRIX_PRINT = "\nOriginal Matrix:"
+ORIGINAL_MATRIX_LOG = "Original Matrix:\n%s"
 
 
 def handle_binary_operation(op: str, saved_matrices) -> np.ndarray | None:
@@ -65,9 +66,9 @@ def handle_unary_operation(op: str, saved_matrices) -> np.ndarray | None:
     """Egyéb műveletek elvégzése (square, sqrt) egy mátrixon lépésenként."""
     try:
         A = choose_matrix(saved_matrices)
-        print(ORIGINAL_MATRIX)
+        print(ORIGINAL_MATRIX_PRINT)
         print(A)
-        logger.info(ORIGINAL_MATRIX, A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
 
         if op == "square":
             if A.shape[0] != A.shape[1]:
@@ -98,9 +99,9 @@ def scalar_multiply(saved_matrices) -> np.ndarray | None:
     try:
         scalar = float(input("Enter scalar value (number): ").strip())
         matrix = choose_matrix(saved_matrices)
-        print(ORIGINAL_MATRIX)
+        print(ORIGINAL_MATRIX_PRINT)
         print(matrix)
-        logger.info(ORIGINAL_MATRIX, matrix)
+        logger.info(ORIGINAL_MATRIX_LOG, matrix)
 
         print(f"\nStep: Scalar multiplication with {scalar}")
         result = scalar * matrix
@@ -126,9 +127,9 @@ def matrix_inverse(saved_matrices) -> np.ndarray | None:
             logger.error(FORBIDDEN_SQUARE)
             return None
 
-        print(ORIGINAL_MATRIX)
+        print(ORIGINAL_MATRIX_PRINT)
         print(A)
-        logger.info(ORIGINAL_MATRIX, A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
 
         det = np.linalg.det(A)
         print(f"\nStep 1: Determinant = {det:.4f}")
@@ -173,9 +174,9 @@ def matrix_determinant(saved_matrices) -> float | int | None:
             logger.error(FORBIDDEN_SQUARE)
             return None
 
-        print(ORIGINAL_MATRIX)
+        print(ORIGINAL_MATRIX_PRINT)
         print(A)
-        logger.info(ORIGINAL_MATRIX, A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
 
         det = np.linalg.det(A)
         print(f"\nStep: Determinant = {det:.4f}")
@@ -203,9 +204,9 @@ def matrix_adjugate(saved_matrices) -> np.ndarray | None:
             logger.error(FORBIDDEN_SQUARE)
             return None
 
-        print(ORIGINAL_MATRIX)
+        print(ORIGINAL_MATRIX_PRINT)
         print(A)
-        logger.info(ORIGINAL_MATRIX, A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
 
         n = A.shape[0]
         cofactors = np.zeros_like(A)
@@ -235,9 +236,9 @@ def describe_matrix_types(saved_matrices) -> list[str] | None:
         A = choose_matrix(saved_matrices)
         types = []
 
-        print("\nAnalyzing Matrix:")
+        print(ORIGINAL_MATRIX_PRINT)
         print(A)
-        logger.info("Analyzing Matrix:\n%s", A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
 
         if A.ndim != 2:
             error_msg = "Not a valid 2D matrix."
@@ -287,6 +288,87 @@ def describe_matrix_types(saved_matrices) -> list[str] | None:
 
     except Exception as e:
         error_msg = f"Error during matrix type description: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
+
+
+def matrix_minor(saved_matrices) -> np.ndarray | None:
+    """Kiszámítja egy elem minorját lépésenként a felhasználó által megadott sor és oszlop alapján (1-indexelve)."""
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        row = int(input(f"Enter row index to remove (1 to {A.shape[0]}): ").strip()) - 1
+        col = int(input(f"Enter column index to remove (1 to {A.shape[1]}): ").strip()) - 1
+
+        if not (0 <= row < A.shape[0] and 0 <= col < A.shape[1]):
+            print("Invalid row or column index.")
+            logger.error("Invalid indices for minor calculation: row=%d, col=%d", row + 1, col + 1)
+            return None
+
+        minor = np.delete(np.delete(A, row, axis=0), col, axis=1)
+        det_minor = np.linalg.det(minor)
+
+        print(f"\nMinor matrix by removing row {row + 1} and column {col + 1}:")
+        print(minor)
+        print(f"\nDeterminant of the minor matrix: {det_minor:.4f}")
+
+        logger.info("Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor)
+        logger.info("Determinant of the minor matrix: %.4f", det_minor)
+
+        return minor
+    except Exception as e:
+        error_msg = f"Error during minor calculation: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
+
+
+def matrix_cofactor(saved_matrices) -> float | None:
+    """Kiszámítja egy elem kofaktorát lépésenként a felhasználó által megadott sor és oszlop alapján (1-indexelve)."""
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print("\nOriginal Matrix:")
+        print(A)
+        logger.info("Original Matrix:\n%s", A)
+
+        row = int(input(f"Enter row index (1 to {A.shape[0]}): ").strip()) - 1
+        col = int(input(f"Enter column index (1 to {A.shape[1]}): ").strip()) - 1
+
+        if not (0 <= row < A.shape[0] and 0 <= col < A.shape[1]):
+            print("Invalid row or column index.")
+            logger.error("Invalid indices for cofactor calculation: row=%d, col=%d", row + 1, col + 1)
+            return None
+
+        minor_matrix = np.delete(np.delete(A, row, axis=0), col, axis=1)
+        minor_det = np.linalg.det(minor_matrix)
+        cofactor = ((-1) ** (row + col)) * minor_det
+
+        print(f"\nMinor matrix (remove row {row + 1}, column {col + 1}):")
+        print(minor_matrix)
+        print(f"Determinant of minor = {minor_det:.4f}")
+        print(f"Cofactor[{row + 1}][{col + 1}] = (-1)^({row + 1}+{col + 1}) * Minor = {cofactor:.4f}")
+
+        logger.info("Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor_matrix)
+        logger.info("Determinant of minor: %.4f", minor_det)
+        logger.info("Cofactor[%d][%d] = %.4f", row + 1, col + 1, cofactor)
+
+        return cofactor
+    except Exception as e:
+        error_msg = f"Error during cofactor calculation: {e}"
         print(error_msg)
         logger.error(error_msg)
         return None
