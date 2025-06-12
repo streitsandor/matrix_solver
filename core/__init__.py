@@ -9,6 +9,7 @@ from .matrix_ops import (
     describe_matrix_types,
     matrix_minor,
     matrix_cofactor,
+    matrix_cofactor_matrix,
     matrix_rank,
 )
 from .matrix_store import (
@@ -33,6 +34,7 @@ __all__ = [
     "describe_matrix_types",
     "matrix_minor",
     "matrix_cofactor",
+    "matrix_cofactor_matrix",
     "matrix_rank",
     "saved_matrices",
     "last_result",

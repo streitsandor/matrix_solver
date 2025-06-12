@@ -11,6 +11,7 @@ from core import (
     matrix_adjugate,
     matrix_minor,
     matrix_cofactor,
+    matrix_cofactor_matrix,
     matrix_rank,
     save_matrix,
     get_matrix,
@@ -42,13 +43,14 @@ def menu() -> str:
     print("10. Adjugate of a matrix")
     print("11. Minor of a matrix")
     print("12. Cofactor of a matrix")
-    print("13. Rank of a matrix")
-    print("14. Save matrix")
-    print("15. Load matrix")
-    print("16. Show saved matrices")
-    print("17. Delete saved matrix")
-    print("18. Describe matrix type")
-    print("19. Visualize matrix")
+    print("13. Full Cofactor Matrix")
+    print("14. Rank of a matrix")
+    print("15. Save matrix")
+    print("16. Load matrix")
+    print("17. Show saved matrices")
+    print("18. Delete saved matrix")
+    print("19. Describe matrix type")
+    print("20. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -76,13 +78,14 @@ def matrix_calculator() -> None:
         "10": lambda: matrix_adjugate(saved_matrices),
         "11": lambda: matrix_minor(saved_matrices),
         "12": lambda: matrix_cofactor(saved_matrices),
-        "13": lambda: matrix_rank(saved_matrices),
-        "14": lambda: save_matrix(get_matrix, last_result),
-        "15": load_matrix,
-        "16": show_saved_matrices,
-        "17": delete_saved_matrix,
-        "18": lambda: describe_matrix_types(saved_matrices),
-        "19": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "13": lambda: matrix_cofactor_matrix(saved_matrices),
+        "14": lambda: matrix_rank(saved_matrices),
+        "15": lambda: save_matrix(get_matrix, last_result),
+        "16": load_matrix,
+        "17": show_saved_matrices,
+        "18": delete_saved_matrix,
+        "19": lambda: describe_matrix_types(saved_matrices),
+        "20": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 

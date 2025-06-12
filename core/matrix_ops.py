@@ -380,6 +380,43 @@ def matrix_cofactor(saved_matrices) -> float | None:
         return None
 
 
+def matrix_cofactor_matrix(saved_matrices) -> np.ndarray | None:
+    """Teljes kofaktormátrix kiszámítása lépésenként."""
+    try:
+        A = choose_matrix(saved_matrices)
+
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        n = A.shape[0]
+        cofactor_matrix = np.zeros_like(A)
+
+        for i in range(n):
+            for j in range(n):
+                minor = np.delete(np.delete(A, i, axis=0), j, axis=1)
+                cofactor = ((-1) ** (i + j)) * np.linalg.det(minor)
+                cofactor_matrix[i, j] = cofactor
+                print(f"Cofactor[{i+1}][{j+1}] = (-1)^({i+1}+{j+1}) * det(minor) = {cofactor:.4f}")
+                logger.info("Cofactor[%d][%d] = %.4f", i + 1, j + 1, cofactor)
+
+        print("\nCofactor Matrix:")
+        print(cofactor_matrix)
+        logger.info("Cofactor Matrix:\n%s", cofactor_matrix)
+
+        return cofactor_matrix
+    except Exception as e:
+        error_msg = f"Error during full cofactor matrix calculation: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
+
+
 def matrix_rank(saved_matrices) -> int | None:
     """Mátrix rangjának kiszámítása lépésenként."""
     try:
