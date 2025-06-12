@@ -13,6 +13,7 @@ from core import (
     matrix_cofactor,
     matrix_cofactor_matrix,
     matrix_rank,
+    dodgson_condensation,
     save_matrix,
     get_matrix,
     load_matrix,
@@ -45,12 +46,13 @@ def menu() -> str:
     print("12. Cofactor of a matrix")
     print("13. Full Cofactor Matrix")
     print("14. Rank of a matrix")
-    print("15. Save matrix")
-    print("16. Load matrix")
-    print("17. Show saved matrices")
-    print("18. Delete saved matrix")
-    print("19. Describe matrix type")
-    print("20. Visualize matrix")
+    print("15. Dodgson Condensation")
+    print("16. Save matrix")
+    print("17. Load matrix")
+    print("18. Show saved matrices")
+    print("19. Delete saved matrix")
+    print("20. Describe matrix type")
+    print("21. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -80,12 +82,13 @@ def matrix_calculator() -> None:
         "12": lambda: matrix_cofactor(saved_matrices),
         "13": lambda: matrix_cofactor_matrix(saved_matrices),
         "14": lambda: matrix_rank(saved_matrices),
-        "15": lambda: save_matrix(get_matrix, last_result),
-        "16": load_matrix,
-        "17": show_saved_matrices,
-        "18": delete_saved_matrix,
-        "19": lambda: describe_matrix_types(saved_matrices),
-        "20": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "15": lambda: dodgson_condensation(saved_matrices),
+        "16": lambda: save_matrix(get_matrix, last_result),
+        "17": load_matrix,
+        "18": show_saved_matrices,
+        "19": delete_saved_matrix,
+        "20": lambda: describe_matrix_types(saved_matrices),
+        "21": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 

@@ -11,6 +11,7 @@ from .matrix_ops import (
     matrix_cofactor,
     matrix_cofactor_matrix,
     matrix_rank,
+    dodgson_condensation,
 )
 from .matrix_store import (
     saved_matrices,
@@ -36,6 +37,7 @@ __all__ = [
     "matrix_cofactor",
     "matrix_cofactor_matrix",
     "matrix_rank",
+    "dodgson_condensation",
     "saved_matrices",
     "last_result",
     "save_matrix",

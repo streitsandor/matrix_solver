@@ -437,3 +437,64 @@ def matrix_rank(saved_matrices) -> int | None:
         print(error_msg)
         logger.error(error_msg)
         return None
+
+
+def dodgson_condensation(saved_matrices) -> float | None:
+    """Dodgson-féle kondenzáció lépésenként, középső pivottal."""
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        n = A.shape[0]
+        steps = [A.astype(float)]
+
+        for k in range(1, n):
+            prev = steps[-1]
+            if k > 1:
+                denom = steps[-2]
+            else:
+                denom = None
+
+            size = prev.shape[0] - 1
+            next_matrix = np.zeros((size, size))
+
+            for i in range(size):
+                for j in range(size):
+                    a = prev[i, j]
+                    b = prev[i, j + 1]
+                    c = prev[i + 1, j]
+                    d = prev[i + 1, j + 1]
+                    numerator = a * d - b * c
+
+                    if denom is None:
+                        next_matrix[i, j] = numerator
+                    else:
+                        pivot = denom[i + 1, j + 1]
+                        if np.isclose(pivot, 0):
+                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0")
+                            logger.warning("Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1)
+                            pivot = 1.0
+                        next_matrix[i, j] = numerator / pivot
+
+            print(f"\nStep {k} matrix:")
+            print(next_matrix)
+            logger.info("Step %d matrix:\n%s", k, next_matrix)
+            steps.append(next_matrix)
+
+        determinant = steps[-1][0, 0]
+        print(f"\nFinal determinant by Dodgson condensation: {determinant:.4f}")
+        logger.info("Final determinant by Dodgson condensation: %.4f", determinant)
+        return determinant
+
+    except Exception as e:
+        error_msg = f"Error during Dodgson condensation: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
