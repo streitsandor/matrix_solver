@@ -372,3 +372,25 @@ def matrix_cofactor(saved_matrices) -> float | None:
         print(error_msg)
         logger.error(error_msg)
         return None
+
+
+def matrix_rank(saved_matrices) -> int | None:
+    """Mátrix rangjának kiszámítása lépésenként."""
+    try:
+        A = choose_matrix(saved_matrices)
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        rank = np.linalg.matrix_rank(A)
+
+        print(f"\nStep: Matrix rank = {rank}")
+        logger.info("Matrix rank = %d", rank)
+
+        return rank
+    except Exception as e:
+        error_msg = f"Error during rank calculation: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
