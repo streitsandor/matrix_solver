@@ -34,7 +34,7 @@ def menu() -> str:
     print("2. Subtraction")
     print("3. Multiplication")
     print("4. Division")
-    print("5. Squaring (Matrix ^ 2)")
+    print("5. Power (Matrix ^ n)")
     print("6. Square Root (element-wise)")
     print("7. Multiply matrix with scalar")
     print("8. Inverse of a matrix")
@@ -68,7 +68,7 @@ def matrix_calculator() -> None:
         "2": lambda: handle_binary_operation("-", saved_matrices),
         "3": lambda: handle_binary_operation("*", saved_matrices),
         "4": lambda: handle_binary_operation("/", saved_matrices),
-        "5": lambda: handle_unary_operation("square", saved_matrices),
+        "5": lambda: handle_unary_operation("power", saved_matrices),
         "6": lambda: handle_unary_operation("sqrt", saved_matrices),
         "7": lambda: scalar_multiply(saved_matrices),
         "8": lambda: matrix_inverse(saved_matrices),

@@ -63,22 +63,28 @@ def handle_binary_operation(op: str, saved_matrices) -> np.ndarray | None:
 
 
 def handle_unary_operation(op: str, saved_matrices) -> np.ndarray | None:
-    """Egyéb műveletek elvégzése (square, sqrt) egy mátrixon lépésenként."""
+    """Egyéb műveletek elvégzése (power, sqrt) egy mátrixon lépésenként."""
     try:
         A = choose_matrix(saved_matrices)
         print(ORIGINAL_MATRIX_PRINT)
         print(A)
         logger.info(ORIGINAL_MATRIX_LOG, A)
 
-        if op == "square":
+        if op == "power":
             if A.shape[0] != A.shape[1]:
                 print(FORBIDDEN_SQUARE)
                 logger.error(FORBIDDEN_SQUARE)
                 return None
-            result = np.matmul(A, A)
-            print("\nStep: A squared = A * A")
+            try:
+                exp = int(input("Enter power (integer): ").strip())
+            except ValueError:
+                print("Invalid exponent.")
+                logger.error("Invalid exponent input.")
+                return None
+            result = np.linalg.matrix_power(A, exp)
+            print(f"\nStep: A^{exp} =")
             print(result)
-            logger.info("Step: A squared = A * A\n%s", result)
+            logger.info("Matrix raised to power %d:\n%s", exp, result)
             return result
 
         elif op == "sqrt":
