@@ -5,7 +5,7 @@ from core import (
     last_result,
     handle_binary_operation,
     handle_unary_operation,
-    scalar_multiply,
+    multiply_matrix_by_scalar,
     matrix_inverse,
     matrix_determinant,
     matrix_adjugate,
@@ -34,11 +34,11 @@ def menu() -> str:
     print("\nChoose a function:")
     print("1. Addition")
     print("2. Subtraction")
-    print("3. Multiplication")
+    print("3. Matrix x Matrix Multiplication")
     print("4. Division")
     print("5. Power (Matrix ^ n)")
     print("6. Square Root (element-wise)")
-    print("7. Multiply matrix with scalar")
+    print("7. Matrix x Scalar Multiplication")
     print("8. Inverse of a matrix")
     print("9. Determinant of a matrix")
     print("10. Adjugate of a matrix")
@@ -74,7 +74,7 @@ def matrix_calculator() -> None:
         "4": lambda: handle_binary_operation("/", saved_matrices),
         "5": lambda: handle_unary_operation("power", saved_matrices),
         "6": lambda: handle_unary_operation("sqrt", saved_matrices),
-        "7": lambda: scalar_multiply(saved_matrices),
+        "7": lambda: multiply_matrix_by_scalar(saved_matrices),
         "8": lambda: matrix_inverse(saved_matrices),
         "9": lambda: matrix_determinant(saved_matrices),
         "10": lambda: matrix_adjugate(saved_matrices),

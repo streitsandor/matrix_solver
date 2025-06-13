@@ -2,7 +2,7 @@ from .input_handler import get_matrix, choose_matrix
 from .matrix_ops import (
     handle_binary_operation,
     handle_unary_operation,
-    scalar_multiply,
+    multiply_matrix_by_scalar,
     matrix_inverse,
     matrix_determinant,
     matrix_adjugate,
@@ -28,7 +28,7 @@ __all__ = [
     "choose_matrix",
     "handle_binary_operation",
     "handle_unary_operation",
-    "scalar_multiply",
+    "multiply_matrix_by_scalar",
     "matrix_inverse",
     "matrix_determinant",
     "matrix_adjugate",

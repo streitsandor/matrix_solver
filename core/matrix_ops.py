@@ -5,6 +5,7 @@ from core.logger_setup import logger
 FORBIDDEN_SQUARE = "Error: Matrix must be square."
 ORIGINAL_MATRIX_PRINT = "\nOriginal Matrix:"
 ORIGINAL_MATRIX_LOG = "Original Matrix:\n%s"
+COFACTOR_FORMAT = "Cofactor[%d][%d] = %.4f"
 
 
 def handle_binary_operation(op: str, saved_matrices) -> np.ndarray | None:
@@ -41,7 +42,9 @@ def handle_binary_operation(op: str, saved_matrices) -> np.ndarray | None:
             A = np.atleast_2d(A)
             B = np.atleast_2d(B)
             if A.shape[1] != B.shape[0]:
-                error_msg = f"Error: Cannot multiply matrices of shapes {A.shape} and {B.shape}"
+                error_msg = (
+                    f"Error: Cannot multiply matrices of shapes {A.shape} and {B.shape}"
+                )
                 print(error_msg)
                 logger.error(error_msg)
                 return None
@@ -100,7 +103,7 @@ def handle_unary_operation(op: str, saved_matrices) -> np.ndarray | None:
         return None
 
 
-def scalar_multiply(saved_matrices) -> np.ndarray | None:
+def multiply_matrix_by_scalar(saved_matrices) -> np.ndarray | None:
     """Mátrix skaláris szorzása lépésenként."""
     try:
         scalar = float(input("Enter scalar value (number): ").strip())
@@ -222,7 +225,7 @@ def matrix_adjugate(saved_matrices) -> np.ndarray | None:
                 cofactor = ((-1) ** (i + j)) * np.linalg.det(minor)
                 cofactors[i, j] = cofactor
                 print(f"Cofactor[{i}][{j}] = {cofactor:.4f}")
-                logger.info("Cofactor[%d][%d] = %.4f", i, j, cofactor)
+                logger.info(COFACTOR_FORMAT, i, j, cofactor)
 
         adjugate = cofactors.T
         print("\nAdjugate Matrix:")
@@ -269,7 +272,14 @@ def describe_matrix_types(saved_matrices) -> list[str] | None:
 
             if np.allclose(A, np.eye(n)):
                 types.extend(
-                    ["Identitásmátrix", "Diagonális", "Szimmetrikus", "Felső háromszög", "Alsó háromszög", "Skalár"]
+                    [
+                        "Identitásmátrix",
+                        "Diagonális",
+                        "Szimmetrikus",
+                        "Felső háromszög",
+                        "Alsó háromszög",
+                        "Skalár",
+                    ]
                 )
 
         if np.count_nonzero(A) == 0:
@@ -313,11 +323,18 @@ def matrix_minor(saved_matrices) -> np.ndarray | None:
         logger.info(ORIGINAL_MATRIX_LOG, A)
 
         row = int(input(f"Enter row index to remove (1 to {A.shape[0]}): ").strip()) - 1
-        col = int(input(f"Enter column index to remove (1 to {A.shape[1]}): ").strip()) - 1
+        col = (
+            int(input(f"Enter column index to remove (1 to {A.shape[1]}): ").strip())
+            - 1
+        )
 
         if not (0 <= row < A.shape[0] and 0 <= col < A.shape[1]):
             print("Invalid row or column index.")
-            logger.error("Invalid indices for minor calculation: row=%d, col=%d", row + 1, col + 1)
+            logger.error(
+                "Invalid indices for minor calculation: row=%d, col=%d",
+                row + 1,
+                col + 1,
+            )
             return None
 
         minor = np.delete(np.delete(A, row, axis=0), col, axis=1)
@@ -327,7 +344,9 @@ def matrix_minor(saved_matrices) -> np.ndarray | None:
         print(minor)
         print(f"\nDeterminant of the minor matrix: {det_minor:.4f}")
 
-        logger.info("Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor)
+        logger.info(
+            "Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor
+        )
         logger.info("Determinant of the minor matrix: %.4f", det_minor)
 
         return minor
@@ -356,7 +375,11 @@ def matrix_cofactor(saved_matrices) -> float | None:
 
         if not (0 <= row < A.shape[0] and 0 <= col < A.shape[1]):
             print("Invalid row or column index.")
-            logger.error("Invalid indices for cofactor calculation: row=%d, col=%d", row + 1, col + 1)
+            logger.error(
+                "Invalid indices for cofactor calculation: row=%d, col=%d",
+                row + 1,
+                col + 1,
+            )
             return None
 
         minor_matrix = np.delete(np.delete(A, row, axis=0), col, axis=1)
@@ -366,11 +389,18 @@ def matrix_cofactor(saved_matrices) -> float | None:
         print(f"\nMinor matrix (remove row {row + 1}, column {col + 1}):")
         print(minor_matrix)
         print(f"Determinant of minor = {minor_det:.4f}")
-        print(f"Cofactor[{row + 1}][{col + 1}] = (-1)^({row + 1}+{col + 1}) * Minor = {cofactor:.4f}")
+        print(
+            f"Cofactor[{row + 1}][{col + 1}] = (-1)^({row + 1}+{col + 1}) * Minor = {cofactor:.4f}"
+        )
 
-        logger.info("Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor_matrix)
+        logger.info(
+            "Minor matrix (remove row %d, column %d):\n%s",
+            row + 1,
+            col + 1,
+            minor_matrix,
+        )
         logger.info("Determinant of minor: %.4f", minor_det)
-        logger.info("Cofactor[%d][%d] = %.4f", row + 1, col + 1, cofactor)
+        logger.info(COFACTOR_FORMAT, row + 1, col + 1, cofactor)
 
         return cofactor
     except Exception as e:
@@ -402,8 +432,10 @@ def matrix_cofactor_matrix(saved_matrices) -> np.ndarray | None:
                 minor = np.delete(np.delete(A, i, axis=0), j, axis=1)
                 cofactor = ((-1) ** (i + j)) * np.linalg.det(minor)
                 cofactor_matrix[i, j] = cofactor
-                print(f"Cofactor[{i+1}][{j+1}] = (-1)^({i+1}+{j+1}) * det(minor) = {cofactor:.4f}")
-                logger.info("Cofactor[%d][%d] = %.4f", i + 1, j + 1, cofactor)
+                print(
+                    f"Cofactor[{i+1}][{j+1}] = (-1)^({i+1}+{j+1}) * det(minor) = {cofactor:.4f}"
+                )
+                logger.info(COFACTOR_FORMAT, i + 1, j + 1, cofactor)
 
         print("\nCofactor Matrix:")
         print(cofactor_matrix)
@@ -478,8 +510,12 @@ def dodgson_condensation(saved_matrices) -> float | None:
                     else:
                         pivot = denom[i + 1, j + 1]
                         if np.isclose(pivot, 0):
-                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0")
-                            logger.warning("Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1)
+                            print(
+                                f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0"
+                            )
+                            logger.warning(
+                                "Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1
+                            )
                             pivot = 1.0
                         next_matrix[i, j] = numerator / pivot
 
