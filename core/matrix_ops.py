@@ -42,9 +42,7 @@ def handle_binary_operation(op: str, saved_matrices) -> np.ndarray | None:
             A = np.atleast_2d(A)
             B = np.atleast_2d(B)
             if A.shape[1] != B.shape[0]:
-                error_msg = (
-                    f"Error: Cannot multiply matrices of shapes {A.shape} and {B.shape}"
-                )
+                error_msg = f"Error: Cannot multiply matrices of shapes {A.shape} and {B.shape}"
                 print(error_msg)
                 logger.error(error_msg)
                 return None
@@ -323,10 +321,7 @@ def matrix_minor(saved_matrices) -> np.ndarray | None:
         logger.info(ORIGINAL_MATRIX_LOG, A)
 
         row = int(input(f"Enter row index to remove (1 to {A.shape[0]}): ").strip()) - 1
-        col = (
-            int(input(f"Enter column index to remove (1 to {A.shape[1]}): ").strip())
-            - 1
-        )
+        col = int(input(f"Enter column index to remove (1 to {A.shape[1]}): ").strip()) - 1
 
         if not (0 <= row < A.shape[0] and 0 <= col < A.shape[1]):
             print("Invalid row or column index.")
@@ -344,9 +339,7 @@ def matrix_minor(saved_matrices) -> np.ndarray | None:
         print(minor)
         print(f"\nDeterminant of the minor matrix: {det_minor:.4f}")
 
-        logger.info(
-            "Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor
-        )
+        logger.info("Minor matrix (remove row %d, column %d):\n%s", row + 1, col + 1, minor)
         logger.info("Determinant of the minor matrix: %.4f", det_minor)
 
         return minor
@@ -389,9 +382,7 @@ def matrix_cofactor(saved_matrices) -> float | None:
         print(f"\nMinor matrix (remove row {row + 1}, column {col + 1}):")
         print(minor_matrix)
         print(f"Determinant of minor = {minor_det:.4f}")
-        print(
-            f"Cofactor[{row + 1}][{col + 1}] = (-1)^({row + 1}+{col + 1}) * Minor = {cofactor:.4f}"
-        )
+        print(f"Cofactor[{row + 1}][{col + 1}] = (-1)^({row + 1}+{col + 1}) * Minor = {cofactor:.4f}")
 
         logger.info(
             "Minor matrix (remove row %d, column %d):\n%s",
@@ -432,9 +423,7 @@ def matrix_cofactor_matrix(saved_matrices) -> np.ndarray | None:
                 minor = np.delete(np.delete(A, i, axis=0), j, axis=1)
                 cofactor = ((-1) ** (i + j)) * np.linalg.det(minor)
                 cofactor_matrix[i, j] = cofactor
-                print(
-                    f"Cofactor[{i+1}][{j+1}] = (-1)^({i+1}+{j+1}) * det(minor) = {cofactor:.4f}"
-                )
+                print(f"Cofactor[{i+1}][{j+1}] = (-1)^({i+1}+{j+1}) * det(minor) = {cofactor:.4f}")
                 logger.info(COFACTOR_FORMAT, i + 1, j + 1, cofactor)
 
         print("\nCofactor Matrix:")
@@ -510,12 +499,8 @@ def dodgson_condensation(saved_matrices) -> float | None:
                     else:
                         pivot = denom[i + 1, j + 1]
                         if np.isclose(pivot, 0):
-                            print(
-                                f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0"
-                            )
-                            logger.warning(
-                                "Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1
-                            )
+                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0")
+                            logger.warning("Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1)
                             pivot = 1.0
                         next_matrix[i, j] = numerator / pivot
 
@@ -602,8 +587,13 @@ def solve_cramers_rule(saved_matrices) -> np.ndarray | None:
         return None
 
 
+def round_if_close(value: float, tol: float = 0.05) -> float:
+    """Tűréshatáron belüli kerekítés a legközelebbi egész számra."""
+    return round(value) if abs(value - round(value)) < tol else round(value, 2)
+
+
 def solve_gaussian_elimination(saved_matrices) -> np.ndarray | None:
-    """Lineáris egyenletrendszer megoldása Gaussian eliminációval, 2 decimális kerekítéssel."""
+    """Lineáris egyenletrendszer megoldása Gaussian eliminációval, 2 decimális kerekítéssel, x-y-z és jobb oldal + végső értékkel."""
     try:
         print("Choose coefficient matrix A:")
         A = choose_matrix(saved_matrices)
@@ -628,18 +618,12 @@ def solve_gaussian_elimination(saved_matrices) -> np.ndarray | None:
 
         # Forward elimination
         for i in range(n):
-            # Pivot row selection
             max_row = i + np.argmax(abs(augmented[i:, i]))
             if i != max_row:
                 augmented[[i, max_row]] = augmented[[max_row, i]]
                 print(f"\nSwapped rows {i+1} and {max_row+1}:")
                 print(np.round(augmented, 2))
-                logger.info(
-                    "Swapped rows %d and %d:\n%s",
-                    i + 1,
-                    max_row + 1,
-                    np.round(augmented, 2),
-                )
+                logger.info("Swapped rows %d and %d:\n%s", i + 1, max_row + 1, np.round(augmented, 2))
 
             pivot = augmented[i, i]
             if np.isclose(pivot, 0):
@@ -648,47 +632,42 @@ def solve_gaussian_elimination(saved_matrices) -> np.ndarray | None:
                 return None
             augmented[i] /= pivot
 
-            print(f"\nNormalized row {i+1}:")
-            print(np.round(augmented, 2))
-            logger.info("Normalized row %d:\n%s", i + 1, np.round(augmented, 2))
-
             for j in range(i + 1, n):
                 factor = augmented[j, i]
                 augmented[j] -= factor * augmented[i]
 
-            print(f"\nAfter eliminating below row {i+1}:")
-            print(np.round(augmented, 2))
-            logger.info(
-                "After eliminating below row %d:\n%s", i + 1, np.round(augmented, 2)
-            )
-
-        # Final row-reduced matrix
         reduced = np.round(augmented, 2)
-        print("\nFinal reduced matrix [A|B]:")
+
+        print("\nFinal reduced matrix [A | B]:")
         print(reduced)
         logger.info("Final reduced matrix:\n%s", reduced)
 
-        # Show coefficient matrix and RHS separately
-        coeffs = reduced[:, :-1]
-        rhs = reduced[:, -1].reshape(-1, 1)
-
-        print("\nCoefficients of variables (x, y, z...) and right-hand sides:")
-        var_names = [chr(120 + i) for i in range(n)]  # x, y, z, ...
-        for i in range(n):
-            row_str = " | ".join(f"{coeffs[i, j]:.2f}" for j in range(n))
-            print(f"[ {row_str} ]  =  {rhs[i, 0]:.2f}")
-
-        # Back substitution
+        # Back-substitution
         x = np.zeros((n, 1))
         for i in range(n - 1, -1, -1):
-            x[i] = reduced[i, -1] - np.dot(reduced[i, i + 1 : n], x[i + 1 : n])
-        x = np.round(x, 2)
+            rhs = reduced[i, -1]
+            coeffs = reduced[i, i + 1 : n].reshape(1, -1)
+            known_x = x[i + 1 : n].reshape(-1, 1)
+            x[i] = rhs - float(coeffs @ known_x)
 
-        print("\nSolution:")
+        var_names = ["x", "y", "z", "w", "v", "u"]  # Extendable
+
+        # Print variable values for each row
+        print("\nEquation-wise results (with x, y, z and RHS):")
         for i in range(n):
-            print(f"{var_names[i]} = {x[i, 0]:.2f}")
+            print(f"\nRow {i+1}:")
+            for j in range(n):
+                value = x[j] if j >= i else 0.0
+                v = round_if_close(float(value))
+                print(f" - {var_names[j]} = {v:.2f}")
+            print(f" - right-hand side = {float(reduced[i, -1]):.2f}")
 
-        logger.info("Gaussian Elimination solution (rounded):\n%s", x)
+        print("\nFinal Solution:")
+        for i in range(n):
+            val = round_if_close(float(x[i, 0]))
+            print(f" - {var_names[i]} = {val:.2f}")
+        logger.info("Final solution vector:\n%s", x)
+
         return x
 
     except Exception as e:
