@@ -8,6 +8,8 @@ from core import (
     multiply_matrix_by_scalar,
     matrix_inverse,
     matrix_determinant,
+    determinant_sarrus,
+    determinant_laplace,
     matrix_adjugate,
     matrix_minor,
     matrix_cofactor,
@@ -44,21 +46,23 @@ def menu() -> str:
     print("7. Matrix x Scalar Multiplication")
     print("8. Inverse of a matrix")
     print("9. Determinant of a matrix")
-    print("10. Adjugate of a matrix")
-    print("11. Minor of a matrix")
-    print("12. Cofactor of a matrix")
-    print("13. Full Cofactor Matrix")
-    print("14. Rank of a matrix")
-    print("15. Dodgson Condensation")
-    print("16. Linear solver (Cramer's Rule)")
-    print("17. Linear solver (Gaussian Elimination)")
-    print("18. Linear solver (Inverse Matrix Method)")
-    print("19. Save matrix")
-    print("20. Load matrix")
-    print("21. Show saved matrices")
-    print("22. Delete saved matrix")
-    print("23. Describe matrix type")
-    print("24. Visualize matrix")
+    print("10. Determinant (Sarrus' Rule)")
+    print("11. Determinant (Laplace Expansion)")
+    print("12. Adjugate of a matrix")
+    print("13. Minor of a matrix")
+    print("14. Cofactor of a matrix")
+    print("15. Full Cofactor Matrix")
+    print("16. Rank of a matrix")
+    print("17. Dodgson Condensation")
+    print("18. Linear solver (Cramer's Rule)")
+    print("19. Linear solver (Gaussian Elimination)")
+    print("20. Linear solver (Inverse Matrix Method)")
+    print("21. Save matrix")
+    print("22. Load matrix")
+    print("23. Show saved matrices")
+    print("24. Delete saved matrix")
+    print("25. Describe matrix type")
+    print("26. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -83,21 +87,23 @@ def matrix_calculator() -> None:
         "7": lambda: multiply_matrix_by_scalar(saved_matrices),
         "8": lambda: matrix_inverse(saved_matrices),
         "9": lambda: matrix_determinant(saved_matrices),
-        "10": lambda: matrix_adjugate(saved_matrices),
-        "11": lambda: matrix_minor(saved_matrices),
-        "12": lambda: matrix_cofactor(saved_matrices),
-        "13": lambda: matrix_cofactor_matrix(saved_matrices),
-        "14": lambda: matrix_rank(saved_matrices),
-        "15": lambda: dodgson_condensation(saved_matrices),
-        "16": lambda: solve_cramers_rule(saved_matrices),
-        "17": lambda: solve_gaussian_elimination(saved_matrices),
-        "18": lambda: solve_inverse_method(saved_matrices),
-        "19": lambda: save_matrix(get_matrix, last_result),
-        "20": load_matrix,
-        "21": show_saved_matrices,
-        "22": delete_saved_matrix,
-        "23": lambda: describe_matrix_types(saved_matrices),
-        "24": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "10": lambda: determinant_sarrus(saved_matrices),
+        "11": lambda: determinant_laplace(saved_matrices),
+        "12": lambda: matrix_adjugate(saved_matrices),
+        "13": lambda: matrix_minor(saved_matrices),
+        "14": lambda: matrix_cofactor(saved_matrices),
+        "15": lambda: matrix_cofactor_matrix(saved_matrices),
+        "16": lambda: matrix_rank(saved_matrices),
+        "17": lambda: dodgson_condensation(saved_matrices),
+        "18": lambda: solve_cramers_rule(saved_matrices),
+        "19": lambda: solve_gaussian_elimination(saved_matrices),
+        "20": lambda: solve_inverse_method(saved_matrices),
+        "21": lambda: save_matrix(get_matrix, last_result),
+        "22": load_matrix,
+        "23": show_saved_matrices,
+        "24": delete_saved_matrix,
+        "25": lambda: describe_matrix_types(saved_matrices),
+        "26": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 

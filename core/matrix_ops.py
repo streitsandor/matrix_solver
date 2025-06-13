@@ -719,3 +719,83 @@ def solve_inverse_method(saved_matrices) -> np.ndarray | None:
         print(error_msg)
         logger.error(error_msg)
         return None
+
+
+def determinant_sarrus(saved_matrices) -> float | None:
+    """Sarrus szabállyal determinánt számítás. (csak 3x3 mátrixra)."""
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape != (3, 3):
+            print("Sarrus' Rule is only valid for 3x3 matrices.")
+            logger.error("Invalid size for Sarrus' Rule: %s", A.shape)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        a, b, c = A[0]
+        d, e, f = A[1]
+        g, h, i = A[2]
+
+        pos1 = a * e * i
+        pos2 = b * f * g
+        pos3 = c * d * h
+        pos_sum = pos1 + pos2 + pos3
+
+        neg1 = c * e * g
+        neg2 = a * f * h
+        neg3 = b * d * i
+        neg_sum = neg1 + neg2 + neg3
+
+        print("\nPositive Diagonals:")
+        print(f"  {a:.2f}·{e:.2f}·{i:.2f} + {b:.2f}·{f:.2f}·{g:.2f} + {c:.2f}·{d:.2f}·{h:.2f} = {pos_sum:.2f}")
+        print("Negative Diagonals:")
+        print(f"  {c:.2f}·{e:.2f}·{g:.2f} + {a:.2f}·{f:.2f}·{h:.2f} + {b:.2f}·{d:.2f}·{i:.2f} = {neg_sum:.2f}")
+
+        determinant = pos_sum - neg_sum
+        print(f"\nDeterminant (Sarrus): {determinant:.2f}")
+
+        logger.info("Sarrus Rule: +%.2f - %.2f = %.2f", pos_sum, neg_sum, determinant)
+        return round(determinant, 2)
+    except Exception as e:
+        error_msg = f"Error during Sarrus' Rule: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
+
+
+def determinant_laplace(saved_matrices) -> float | None:
+    """Determináns számítás rekurzív Laplace módszerrel."""
+
+    def laplace_recursive(matrix: np.ndarray) -> float:
+        if matrix.shape == (2, 2):
+            return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]
+        total = 0
+        for j in range(matrix.shape[1]):
+            minor = np.delete(np.delete(matrix, 0, axis=0), j, axis=1)
+            cofactor = ((-1) ** j) * matrix[0, j] * laplace_recursive(minor)
+            print(f"cofactor for column {j+1}: {cofactor:.2f}")
+            total += cofactor
+        return total
+
+    try:
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print(A)
+        logger.info(ORIGINAL_MATRIX_LOG, A)
+
+        det = laplace_recursive(A)
+        print(f"\nDeterminant (Laplace Expansion): {det:.2f}")
+        logger.info("Laplace Expansion - determinant = %.2f", det)
+        return round(det, 2)
+    except Exception as e:
+        error_msg = f"Error during Laplace expansion: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
