@@ -534,3 +534,69 @@ def dodgson_condensation(saved_matrices) -> float | None:
         print(error_msg)
         logger.error(error_msg)
         return None
+
+
+def solve_cramers_rule(saved_matrices) -> np.ndarray | None:
+    """Lineáris egyenletrendszer megoldása Cramer szabállyal."""
+    try:
+        print("Choose coefficient matrix A:")
+        A = choose_matrix(saved_matrices)
+        if A.shape[0] != A.shape[1]:
+            print(FORBIDDEN_SQUARE)
+            logger.error(FORBIDDEN_SQUARE)
+            return None
+
+        print("Choose constant matrix B (right-hand side):")
+        B = choose_matrix(saved_matrices)
+
+        if B.ndim == 1:
+            B = B.reshape(-1, 1)
+
+        if A.shape[0] != B.shape[0] or B.shape[1] != 1:
+            print("B must be a column vector with the same number of rows as A.")
+            logger.error("Invalid B shape: %s", B.shape)
+            return None
+
+        print(ORIGINAL_MATRIX_PRINT)
+        print("A =")
+        print(A)
+        print("B =")
+        print(B)
+        logger.info("Cramer's Rule - Matrix A:\n%s", A)
+        logger.info("Cramer's Rule - Matrix B:\n%s", B)
+
+        det_A = np.linalg.det(A)
+        if np.isclose(det_A, 0):
+            print("Determinant of A is zero. System has no unique solution.")
+            logger.error("Cramer's Rule failed: det(A) = 0")
+            return None
+
+        print(f"\nDeterminant of A: {det_A:.4f}")
+        logger.info("Determinant of A: %.4f", det_A)
+
+        n = A.shape[1]
+        solution = np.zeros(n)
+
+        for i in range(n):
+            A_i = A.copy()
+            A_i[:, i] = B[:, 0]
+            det_A_i = np.linalg.det(A_i)
+
+            print(f"\nA with column {i+1} replaced by B:")
+            print(A_i)
+            print(f"Determinant of A_{i+1}: {det_A_i:.4f}")
+            logger.info("A with column %d replaced by B:\n%s", i + 1, A_i)
+            logger.info("Determinant of A_%d: %.4f", i + 1, det_A_i)
+
+            solution[i] = det_A_i / det_A
+
+        print("\nSolution vector X:")
+        print(solution.reshape(-1, 1))
+        logger.info("Solution vector X:\n%s", solution.reshape(-1, 1))
+
+        return solution.reshape(-1, 1)
+    except Exception as e:
+        error_msg = f"Error during Cramer's Rule calculation: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
