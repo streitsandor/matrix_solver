@@ -600,3 +600,143 @@ def solve_cramers_rule(saved_matrices) -> np.ndarray | None:
         print(error_msg)
         logger.error(error_msg)
         return None
+
+
+def solve_gaussian_elimination(saved_matrices) -> np.ndarray | None:
+    """Lineáris egyenletrendszer megoldása Gaussian eliminációval, 2 decimális kerekítéssel."""
+    try:
+        print("Choose coefficient matrix A:")
+        A = choose_matrix(saved_matrices)
+
+        print("Choose right-hand side matrix B:")
+        B = choose_matrix(saved_matrices)
+
+        A = A.astype(float)
+        B = B.astype(float).reshape(-1, 1)
+
+        if A.shape[0] != B.shape[0]:
+            print("A and B must have the same number of rows.")
+            logger.error("Mismatched rows: A%s, B%s", A.shape, B.shape)
+            return None
+
+        n = A.shape[0]
+        augmented = np.hstack((A, B))
+
+        print("\nOriginal Augmented Matrix [A | B]:")
+        print(np.round(augmented, 2))
+        logger.info("Original Augmented Matrix:\n%s", np.round(augmented, 2))
+
+        # Forward elimination
+        for i in range(n):
+            # Pivot row selection
+            max_row = i + np.argmax(abs(augmented[i:, i]))
+            if i != max_row:
+                augmented[[i, max_row]] = augmented[[max_row, i]]
+                print(f"\nSwapped rows {i+1} and {max_row+1}:")
+                print(np.round(augmented, 2))
+                logger.info(
+                    "Swapped rows %d and %d:\n%s",
+                    i + 1,
+                    max_row + 1,
+                    np.round(augmented, 2),
+                )
+
+            pivot = augmented[i, i]
+            if np.isclose(pivot, 0):
+                print("Zero pivot encountered.")
+                logger.error("Zero pivot at row %d", i + 1)
+                return None
+            augmented[i] /= pivot
+
+            print(f"\nNormalized row {i+1}:")
+            print(np.round(augmented, 2))
+            logger.info("Normalized row %d:\n%s", i + 1, np.round(augmented, 2))
+
+            for j in range(i + 1, n):
+                factor = augmented[j, i]
+                augmented[j] -= factor * augmented[i]
+
+            print(f"\nAfter eliminating below row {i+1}:")
+            print(np.round(augmented, 2))
+            logger.info(
+                "After eliminating below row %d:\n%s", i + 1, np.round(augmented, 2)
+            )
+
+        # Final row-reduced matrix
+        reduced = np.round(augmented, 2)
+        print("\nFinal reduced matrix [A|B]:")
+        print(reduced)
+        logger.info("Final reduced matrix:\n%s", reduced)
+
+        # Show coefficient matrix and RHS separately
+        coeffs = reduced[:, :-1]
+        rhs = reduced[:, -1].reshape(-1, 1)
+
+        print("\nCoefficients of variables (x, y, z...) and right-hand sides:")
+        var_names = [chr(120 + i) for i in range(n)]  # x, y, z, ...
+        for i in range(n):
+            row_str = " | ".join(f"{coeffs[i, j]:.2f}" for j in range(n))
+            print(f"[ {row_str} ]  =  {rhs[i, 0]:.2f}")
+
+        # Back substitution
+        x = np.zeros((n, 1))
+        for i in range(n - 1, -1, -1):
+            x[i] = reduced[i, -1] - np.dot(reduced[i, i + 1 : n], x[i + 1 : n])
+        x = np.round(x, 2)
+
+        print("\nSolution:")
+        for i in range(n):
+            print(f"{var_names[i]} = {x[i, 0]:.2f}")
+
+        logger.info("Gaussian Elimination solution (rounded):\n%s", x)
+        return x
+
+    except Exception as e:
+        error_msg = f"Error during Gaussian elimination: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None
+
+
+def solve_inverse_method(saved_matrices) -> np.ndarray | None:
+    """Lineáris egyenletrendszer megoldása inverz módszerrel (A^-1 * B)."""
+    try:
+        print("Choose coefficient matrix A:")
+        A = choose_matrix(saved_matrices)
+
+        print("Choose right-hand side matrix B:")
+        B = choose_matrix(saved_matrices)
+
+        if A.shape[0] != A.shape[1]:
+            print("A must be square.")
+            logger.error("Non-square matrix A for inverse solution.")
+            return None
+
+        if A.shape[0] != B.shape[0]:
+            print("A and B must have the same number of rows.")
+            logger.error("Mismatched rows: A%s, B%s", A.shape, B.shape)
+            return None
+
+        det = np.linalg.det(A)
+        if np.isclose(det, 0):
+            print("Matrix A is singular.")
+            logger.error("Singular matrix A for inverse solution.")
+            return None
+
+        A_inv = np.linalg.inv(A)
+        X = A_inv @ B
+
+        print("\nInverse of A:")
+        print(A_inv)
+        print("\nSolution vector X = A^-1 * B:")
+        print(X)
+
+        logger.info("Inverse of A:\n%s", A_inv)
+        logger.info("Inverse method solution:\n%s", X)
+
+        return X
+    except Exception as e:
+        error_msg = f"Error during inverse method solution: {e}"
+        print(error_msg)
+        logger.error(error_msg)
+        return None

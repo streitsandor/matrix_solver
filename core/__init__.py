@@ -13,6 +13,8 @@ from .matrix_ops import (
     matrix_rank,
     dodgson_condensation,
     solve_cramers_rule,
+    solve_gaussian_elimination,
+    solve_inverse_method,
 )
 from .matrix_store import (
     saved_matrices,
@@ -40,6 +42,8 @@ __all__ = [
     "matrix_rank",
     "dodgson_condensation",
     "solve_cramers_rule",
+    "solve_gaussian_elimination",
+    "solve_inverse_method",
     "saved_matrices",
     "last_result",
     "save_matrix",

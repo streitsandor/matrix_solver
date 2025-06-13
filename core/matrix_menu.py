@@ -15,6 +15,8 @@ from core import (
     matrix_rank,
     dodgson_condensation,
     solve_cramers_rule,
+    solve_gaussian_elimination,
+    solve_inverse_method,
     save_matrix,
     get_matrix,
     load_matrix,
@@ -49,12 +51,14 @@ def menu() -> str:
     print("14. Rank of a matrix")
     print("15. Dodgson Condensation")
     print("16. Linear solver (Cramer's Rule)")
-    print("17. Save matrix")
-    print("18. Load matrix")
-    print("19. Show saved matrices")
-    print("20. Delete saved matrix")
-    print("21. Describe matrix type")
-    print("22. Visualize matrix")
+    print("17. Linear solver (Gaussian Elimination)")
+    print("18. Linear solver (Inverse Matrix Method)")
+    print("19. Save matrix")
+    print("20. Load matrix")
+    print("21. Show saved matrices")
+    print("22. Delete saved matrix")
+    print("23. Describe matrix type")
+    print("24. Visualize matrix")
     print("Q. Quit")
     return input("Your choice: ").strip()
 
@@ -86,12 +90,14 @@ def matrix_calculator() -> None:
         "14": lambda: matrix_rank(saved_matrices),
         "15": lambda: dodgson_condensation(saved_matrices),
         "16": lambda: solve_cramers_rule(saved_matrices),
-        "17": lambda: save_matrix(get_matrix, last_result),
-        "18": load_matrix,
-        "19": show_saved_matrices,
-        "20": delete_saved_matrix,
-        "21": lambda: describe_matrix_types(saved_matrices),
-        "22": lambda: visualize_matrix_option(saved_matrices, last_result),
+        "17": lambda: solve_gaussian_elimination(saved_matrices),
+        "18": lambda: solve_inverse_method(saved_matrices),
+        "19": lambda: save_matrix(get_matrix, last_result),
+        "20": load_matrix,
+        "21": show_saved_matrices,
+        "22": delete_saved_matrix,
+        "23": lambda: describe_matrix_types(saved_matrices),
+        "24": lambda: visualize_matrix_option(saved_matrices, last_result),
         "Q": quit_program,
     }
 
