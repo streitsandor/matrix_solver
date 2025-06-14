@@ -464,25 +464,22 @@ def dodgson_condensation(saved_matrices) -> float | None:
     """Dodgson-féle kondenzáció lépésenként, középső pivottal."""
     try:
         A = choose_matrix(saved_matrices)
+
         if A.shape[0] != A.shape[1]:
-            print(FORBIDDEN_SQUARE)
-            logger.error(FORBIDDEN_SQUARE)
+            print("Error: Matrix must be square.")
             return None
 
-        print(ORIGINAL_MATRIX_PRINT)
-        print(A)
-        logger.info(ORIGINAL_MATRIX_LOG, A)
-
         n = A.shape[0]
+        if n < 3:
+            print("Dodgson condensation requires at least a 3x3 matrix.")
+            return None
+
         steps = [A.astype(float)]
+        print("Step 1: Original Matrix")
+        print(steps[0])
 
-        for k in range(1, n):
+        for step in range(1, n - 1):  # Stop before 2×2 becomes 1×1
             prev = steps[-1]
-            if k > 1:
-                denom = steps[-2]
-            else:
-                denom = None
-
             size = prev.shape[0] - 1
             next_matrix = np.zeros((size, size))
 
@@ -494,30 +491,57 @@ def dodgson_condensation(saved_matrices) -> float | None:
                     d = prev[i + 1, j + 1]
                     numerator = a * d - b * c
 
-                    if denom is None:
+                    if step == 1:
+                        # First condensation (from 4x4 to 3x3) — no division
                         next_matrix[i, j] = numerator
-                    else:
-                        pivot = denom[i + 1, j + 1]
+                    elif step == 2:
+                        # Second condensation (from 3x3 to 2x2) — use pivot from original (step 0)
+                        pivot = steps[0][i + 1, j + 1]
                         if np.isclose(pivot, 0):
-                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {k+1}, using fallback 1.0")
-                            logger.warning("Zero pivot at (%d,%d) in step %d", i + 2, j + 2, k + 1)
+                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {step+1}, fallback = 1.0")
+                            pivot = 1.0
+                        next_matrix[i, j] = numerator / pivot
+                    else:
+                        # Further condensations (e.g. from 5x5 etc.) use pivot from step - 2
+                        pivot = steps[step - 2][i + 1, j + 1]
+                        if np.isclose(pivot, 0):
+                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {step+1}, fallback = 1.0")
                             pivot = 1.0
                         next_matrix[i, j] = numerator / pivot
 
-            print(f"\nStep {k} matrix:")
-            print(next_matrix)
-            logger.info("Step %d matrix:\n%s", k, next_matrix)
             steps.append(next_matrix)
+            print(f"\nStep {step + 1}:")
+            print(np.round(next_matrix, 2))
 
-        determinant = steps[-1][0, 0]
-        print(f"\nFinal determinant by Dodgson condensation: {determinant:.4f}")
-        logger.info("Final determinant by Dodgson condensation: %.4f", determinant)
-        return determinant
+        # Step 4: final 2x2 matrix
+        final_2x2 = steps[-1]
+        if final_2x2.shape != (2, 2):
+            print("Error: Final matrix is not 2x2.")
+            return None
+
+        print("\nStep 4: Final 2x2 matrix:")
+        print(np.round(final_2x2, 2))
+
+        # Step 5: Subtraction
+        a, b = final_2x2[0]
+        c, d = final_2x2[1]
+        numerator = a * d - b * c
+        print("\nStep 5: Subtraction")
+        print(f"Expression: ({a:.0f} * {d:.0f}) - ({b:.0f} * {c:.0f}) = {numerator:.2f}")
+
+        # Step 6: Division by pivot from 2 steps ago (center value)
+        pivot_matrix = steps[-2]  # the last 3×3
+        pivot = pivot_matrix[1, 1]
+        if np.isclose(pivot, 0):
+            print("Warning: Zero pivot. Using 1.0 as fallback.")
+            pivot = 1.0
+
+        determinant = numerator / pivot
+        print(f"\nStep 6: Final Determinant = {numerator:.2f} / {pivot:.0f} = {round(determinant, 2)}")
+        return round(determinant, 2)
 
     except Exception as e:
-        error_msg = f"Error during Dodgson condensation: {e}"
-        print(error_msg)
-        logger.error(error_msg)
+        print(f"Error during Dodgson condensation: {e}")
         return None
 
 
