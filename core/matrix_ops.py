@@ -474,72 +474,56 @@ def dodgson_condensation(saved_matrices) -> float | None:
             print("Dodgson condensation requires at least a 3x3 matrix.")
             return None
 
-        steps = [A.astype(float)]
-        print("Step 1: Original Matrix")
-        print(steps[0])
+        print("Step 0: A")
+        print(np.round(A, 2))
 
-        for step in range(1, n - 1):  # Stop before 2×2 becomes 1×1
-            prev = steps[-1]
-            size = prev.shape[0] - 1
-            next_matrix = np.zeros((size, size))
+        reached_determinant = False
+        step = 1
 
+        print(f"\nStep {step}: Get B")
+        size = A.shape[0] - 1
+        B = np.zeros((size, size))
+        for i in range(size):
+            for j in range(size):
+                a = A[i, j]
+                b = A[i, j + 1]
+                c = A[i + 1, j]
+                d = A[i + 1, j + 1]
+                numerator = a * d - b * c
+                B[i, j] = numerator
+        print(np.round(B, 2))
+
+        while reached_determinant == False:
+            # Get C
+            step += 1
+            print(f"\nStep {step}: Get C")
+            size = B.shape[0] - 1
+            C = np.zeros((size, size))
             for i in range(size):
                 for j in range(size):
-                    a = prev[i, j]
-                    b = prev[i, j + 1]
-                    c = prev[i + 1, j]
-                    d = prev[i + 1, j + 1]
+                    a = B[i, j]
+                    b = B[i, j + 1]
+                    c = B[i + 1, j]
+                    d = B[i + 1, j + 1]
                     numerator = a * d - b * c
+                    C[i, j] = numerator
+            print(np.round(C, 2))
 
-                    if step == 1:
-                        # First condensation (from 4x4 to 3x3) — no division
-                        next_matrix[i, j] = numerator
-                    elif step == 2:
-                        # Second condensation (from 3x3 to 2x2) — use pivot from original (step 0)
-                        pivot = steps[0][i + 1, j + 1]
-                        if np.isclose(pivot, 0):
-                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {step+1}, fallback = 1.0")
-                            pivot = 1.0
-                        next_matrix[i, j] = numerator / pivot
-                    else:
-                        # Further condensations (e.g. from 5x5 etc.) use pivot from step - 2
-                        pivot = steps[step - 2][i + 1, j + 1]
-                        if np.isclose(pivot, 0):
-                            print(f"Warning: Zero pivot at ({i+2},{j+2}) in step {step+1}, fallback = 1.0")
-                            pivot = 1.0
-                        next_matrix[i, j] = numerator / pivot
-
-            steps.append(next_matrix)
-            print(f"\nStep {step + 1}:")
-            print(np.round(next_matrix, 2))
-
-        # Step 4: final 2x2 matrix
-        final_2x2 = steps[-1]
-        if final_2x2.shape != (2, 2):
-            print("Error: Final matrix is not 2x2.")
-            return None
-
-        print("\nStep 4: Final 2x2 matrix:")
-        print(np.round(final_2x2, 2))
-
-        # Step 5: Subtraction
-        a, b = final_2x2[0]
-        c, d = final_2x2[1]
-        numerator = a * d - b * c
-        print("\nStep 5: Subtraction")
-        print(f"Expression: ({a:.0f} * {d:.0f}) - ({b:.0f} * {c:.0f}) = {numerator:.2f}")
-
-        # Step 6: Division by pivot from 2 steps ago (center value)
-        pivot_matrix = steps[-2]  # the last 3×3
-        pivot = pivot_matrix[1, 1]
-        if np.isclose(pivot, 0):
-            print("Warning: Zero pivot. Using 1.0 as fallback.")
-            pivot = 1.0
-
-        determinant = numerator / pivot
-        print(f"\nStep 6: Final Determinant = {numerator:.2f} / {pivot:.0f} = {round(determinant, 2)}")
-        return round(determinant, 2)
-
+            # get D
+            step += 1
+            print(f"\nStep {step}: Get D")
+            if size == 1:
+                D = C[0, 0] / A[1, 1]
+                reached_determinant = True
+            else:
+                size = C.shape[0]
+                D = np.zeros((size, size))
+                for i in range(size):
+                    for j in range(size):
+                        D[i, j] = C[i, j] / A[i + 1, j + 1]
+                A = B
+                B = D
+            print(np.round(D, 2))
     except Exception as e:
         print(f"Error during Dodgson condensation: {e}")
         return None
